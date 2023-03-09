@@ -45,6 +45,35 @@ app.get("/:user_code/todos", async (req, res) => {
       data : rows,
     });
   });
+
+
+  app.get("/:user_code/todos/:no", async (req, res) => {
+    const {user_code, no} = req.params;
+
+    const [todoRow] = await pool.query(
+      `
+      SELECT *
+      FROM todo
+      WHERE user_code =?
+      AND no = ?
+      `,
+      [user_code, no]
+    );
+
+    if (todoRow == undefined) {
+      res.status(404).json({
+        resultCode : "F-1",
+        msg : "not found",
+      });
+      return;
+    }
+
+    res.json({
+      resultCode : "S-1",
+      msg : "성공",
+      data : todoRow,
+    });
+  });
   
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
